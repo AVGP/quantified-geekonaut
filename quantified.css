@@ -1,0 +1,35 @@
+/*@import url(http://weloveiconfonts.com/api/?family=entypo|fontawesome);*/
+
+/* entypo */
+[class*="entypo-"]:before {
+  font-family: 'entypo', sans-serif;
+}
+
+/* fontawesome */
+[class*="fontawesome-"]:before {
+  font-family: 'FontAwesome', sans-serif;
+}
+
+h1, h2, h3 {
+    text-align: center;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.showcase {
+    border: 1px solid #efefef;
+    text-align: center;
+}
+.showcase li:hover {
+    background-color: #efefef;
+}
+
+.legend div {
+    height: auto;
+}
+
+.legend table {
+    width: auto;
+}

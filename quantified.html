@@ -1,0 +1,148 @@
+<head>
+  <title>Quantified Geekonaut</title>
+  <link rel="stylesheet" href="http://weloveiconfonts.com/api/?family=entypo|fontawesome" type="text/css" />
+  <script src="http://timeago.yarp.com/jquery.timeago.js" type="text/javascript"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/flot/0.7/jquery.flot.min.js" type="text/javascript"></script>
+</head>
+
+<body>
+  <div class="container content-inner">
+    <h1>Quantified Geekonaut</h1>
+    <div class="section row">
+        <div class="col four">{{> Tumblr}}</div>
+        <div class="col four">{{> Github}}</div>
+        <div class="col four">{{> Twitter}}</div>
+    </div>
+    <div class="section row">{{> LastFM}}</div>
+    <div class="section row">{{> Foursquare}}</div>      
+    <div class="section row">
+        {{> Coderwall}}
+    </div>
+  </div>
+</body>
+
+<template name="Tumblr">
+  <h2><span class="entypo-tumblr-circled"></span> Blog</h2>
+  <ul>
+    <li><span class="entypo-pencil"></span> <strong>{{data.posts}}</strong> posts</li>
+    <li><span class="entypo-heart"></span> <strong>{{data.likes}}</strong> likes</li>
+    <li><span class="entypo-clock"></span> last post was <strong>{{prettyTimeAgo}}</strong></li>
+  </ul>
+</template>
+
+<template name="Github">
+  <h2><span class="entypo-github"></span> Github</h2>
+  <ul>
+    <li><span class="entypo-database"></span> <strong>{{data.public_repos}}</strong> repositories</li>
+    <li><span class="fontawesome-group"></span> <strong>{{data.followers}}</strong> followers</li>
+    <li><span class="entypo-paper-plane"></span> <strong>{{data.public_gists}}</strong> gists</li>
+  </ul>
+</template>
+
+<template name="Twitter">
+    <h2><span class="entypo-twitter"></span> Twitter</h2>
+    <ul>
+        <li><span class="fontawesome-group"></span> <strong>{{data.followers_count}}</strong> followers</li>
+        <li><span class="entypo-list"></span> on <strong>{{data.listed_count}}</strong> lists</li>
+        <li><span class="entypo-megaphone"></span> <strong>{{data.statuses_count}}</strong> tweets</li>
+        <li><span class="entypo-back-in-time"></span> joined <strong>{{prettyTimeAgo}}</strong></li>
+    </ul>
+</template>
+
+<template name="LastFM">
+    <h2><span class="entypo-lastfm"></span> Last.fm</h2>
+    {{#if data}}
+        <div class="four col">
+            <table>
+                <caption>
+                    <span class="entypo-note-beamed"> Played music
+                </caption>
+                <thead>
+                    <tr>
+                        <th>Total songs played</th>
+                        <th>Hours listened to top 10</th>
+                        <th>Hours listened this week</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>{{data.user.playcount}}</strong></td>
+                        <td><strong>{{data.top10time}}</strong></td>
+                        <td><strong>{{data.weeklyTime}}</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="four col">
+            <h3><span class="entypo-chart-bar"></span> Top 10 tracks</h3>
+            <ol>
+                {{#each data.topTracks}}
+                <li><a href="{{url}}">{{#if image}}<img src="{{image}}" title="{{name}}" width="32"/>{{/if}} {{artist.name}} - {{name}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="four col">
+            <h3><span class="entypo-chart-bar"></span> Weekly top tracks</h3>
+            <ol>
+                {{#each data.weeklyTracks}}
+                <li><a href="{{url}}">{{#if image}}<img src="{{image}}" title="{{name}}" width="32"/>{{/if}} {{artist.name}} - {{name}}</a></li>
+                {{/each}}
+            </ul>
+        </div>
+    {{else}}
+        <p>Loading...</p>
+    {{/if}}
+</template>
+
+<template name="Foursquare">
+    <h2><span class="entypo-globe"></span> Foursquare</h2>
+    <div class="row">
+        <ul class="three col">
+            <li><span class="fontawesome-certificate"></span> <strong>{{data.user.badges.count}}</strong> badges</li>
+            <li><span class="fontawesome-check"></span> <strong>{{data.user.checkins.count}}</strong> check-ins</li>
+            <li><span class="entypo-users"></span> <strong>{{data.user.friends.count}}</strong> friends</li>
+            <li><span class="entypo-picture"></span> <strong>{{data.user.photos.count}}</strong> photos</li>
+            <li><span class="entypo-trophy"></span> <strong>{{data.user.mayorships.count}}</strong> mayorships</li>
+        </ul>
+        <table class="nine col">
+            <caption>Scores</caption>
+            <thead>
+                <tr>
+                    <th>Recent score</th>
+                    <th>Recent check-ins</th>
+                    <th>Max score</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{data.user.scores.recent}}</td>
+                    <td>{{data.user.scores.checkinsCount}}</td>
+                    <td>{{data.user.scores.max}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="section row" style="clear:both">
+        <ul>
+            {{#each data.badges}}
+                <li class="inline-block"><img src="{{image.prefix}}57{{image.name}}" title="{{name}}: {{description}}"></li>
+            {{/each}}
+        </ul>
+    </div>
+    <div class="section row">
+        <button>Plot</button>
+        <div id="foursquare_chart" style="height:200px;width:100%"></div>
+    </div>
+    {{plot}}
+  </template>
+
+<template name="Coderwall">
+    <h2>Coderwall</h2>
+    <p><strong>{{data.endorsements}}</strong> endorsements</p>
+    <p><strong>{{data.badges.length}}</strong> badges earned:</p>
+    <ul class="showcase row section">
+        {{#each data.badges}}
+        <li class="inline-block"><img src="{{badge}}" alt="{{name}}" title="{{description}}"></li>
+        {{/each}}
+    </ul>
+</template>
