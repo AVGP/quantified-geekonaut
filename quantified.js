@@ -28,9 +28,14 @@ if (Meteor.isClient) {
     setSimpleTemplateData("Foursquare");
     setSimpleTemplateData("LastFM");
     
+    function plotSeries(series, containerID, options) {
+        $(document).ready(function() {
+            $.plot($("#" + containerID).show(), series, options);
+        });
+    }
 
-    Template.Foursquare.events = {
-        "click button": function() {
+    Template.Plots.events = {
+        "click button#fsq": function() {
             //Plotting
             var fsqScores = {data: [], label: "Recent score", yaxis: 1};
             var fsqCheckins = {data: [], label: "Checkins", yaxis: 2};
@@ -44,13 +49,32 @@ if (Meteor.isClient) {
                 fsqCheckins.data.push([dataPoint.timestamp, dataPoint.foursquare.user.checkins.count]);
                 fsqRecentCheckins.data.push([dataPoint.timestamp, dataPoint.foursquare.user.scores.checkinsCount]);
             });
-            $(document).ready(function() {
-                $.plot($("#foursquare_chart"), [fsqScores, fsqCheckins, fsqRecentCheckins], {
-                    yaxes: [{}, {position: "right"}],
-                    xaxes: [{mode: "time"}]
-                });
+            plotSeries([fsqScores, fsqCheckins, fsqRecentCheckins], "foursquare_chart", {
+                yaxes: [{}, {position: "right"}],
+                xaxes: [{mode: "time"}],
+                legend: {position: "sw"}
             });
-        }
+        },
+        "click button#twitter": function() {
+            //Plotting
+            var followers = {data: [], label: "Followers", yaxis: 1};
+            var friends = {data: [], label: "Friends", yaxis: 1};
+            var tweets = {data: [], label: "Tweets", yaxis: 2};
+            
+            if(!Session.get("Twitter") || !$("#twitter_chart").css("width")) return;
+            historicalData.find().forEach(function(dataPoint) {
+                followers.data.push([dataPoint.timestamp, dataPoint.twitter.followers_count]);
+                friends.data.push([dataPoint.timestamp, dataPoint.twitter.friends_count]);
+                tweets.data.push([dataPoint.timestamp, dataPoint.twitter.statuses_count]);
+            });
+            plotSeries([followers, friends, tweets], "twitter_chart", {
+                yaxes: [{}, {position: "right"}],
+                xaxes: [{mode: "time"}],
+                legend: {position: "sw"}
+            });
+        },
+        
+        
     };
 }
 
@@ -114,7 +138,8 @@ var apis = {
             data.weeklyTracks[i].artist.name = data.weeklyTracks[i].artist["#text"];
             if(!data.weeklyTracks[i].image || !data.weeklyTracks[i].image[0]) continue;
             data.weeklyTracks[i].image = data.weeklyTracks[i].image[0]["#text"];
-            data.weeklyTracks[i].duration = this.getBasicAPI("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=4ce0719aa2f0945baaa3ac120fe7d0bd&artist=" + data.weeklyTracks[i].artist.name + "&track=" + data.weeklyTracks[i].name + "&format=json").track.duration / 1000;
+            var trackDetails = this.getBasicAPI("http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key=4ce0719aa2f0945baaa3ac120fe7d0bd&artist=" + data.weeklyTracks[i].artist.name + "&track=" + data.weeklyTracks[i].name + "&format=json").track;
+            data.weeklyTracks[i].duration = ((trackDetails && trackDetails.duration) / 1000) || 0;
             data.weeklyTime += Math.round(parseInt(data.weeklyTracks[i].duration, 10) / 60.0) * data.weeklyTracks[i].playcount;                
         }
         data.weeklyTime = (data.weeklyTime / 60).toFixed(2);
