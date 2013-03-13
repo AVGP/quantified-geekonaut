@@ -171,6 +171,6 @@ if (Meteor.isServer) {
   }
   
   Meteor.startup(function () {
-    storeHistoricalData();
+    Meteor.setTimeout(storeHistoricalData, 0);
   });
 }
