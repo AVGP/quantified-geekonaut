@@ -18,6 +18,7 @@
     <div class="section row">
         {{> Coderwall}}
     </div>
+    <div class="section row">{{> Plots}}</div>
   </div>
 </body>
 
@@ -129,11 +130,6 @@
             {{/each}}
         </ul>
     </div>
-    <div class="section row">
-        <button>Plot</button>
-        <div id="foursquare_chart" style="height:200px;width:100%"></div>
-    </div>
-    {{plot}}
   </template>
 
 <template name="Coderwall">
@@ -145,4 +141,15 @@
         <li class="inline-block"><img src="{{badge}}" alt="{{name}}" title="{{description}}"></li>
         {{/each}}
     </ul>
+</template>
+
+<template name="Plots">
+    <div class="section row">
+        <button id="fsq">Plot Foursquare chart</button>
+        <div id="foursquare_chart" style="height:400px;width:100%;display:none"></div>
+    </div>
+    <div class="section row">
+        <button id="twitter">Plot Twitter chart</button>
+        <div id="twitter_chart" style="height:400px;width:100%;display:none"></div>
+    </div>
 </template>
